@@ -1,103 +1,124 @@
-import Image from "next/image";
+"use client";
+import React, { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Send } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { PCVisualizer } from "@/components/PCVisualizer";
+
+interface Message {
+  id: string;
+  content: string;
+  sender: "user" | "assistant";
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "1",
+      content:
+        "Welcome to PC Builder! Ask me anything about PC components or your build.",
+      sender: "assistant",
+    },
+  ]);
+  const [inputValue, setInputValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      setTimeout(() => {
+        scrollAreaRef.current!.scrollTop = scrollAreaRef.current!.scrollHeight;
+      }, 100);
+    }
+  }, [messages]);
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || loading) return;
+
+    const userMessage = {
+      id: Date.now().toString(),
+      content: inputValue.trim(),
+      sender: "user" as const,
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+    setLoading(true);
+
+    // Simulate response
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          content: "Here's a suggested component...",
+          sender: "assistant",
+        },
+      ]);
+      setLoading(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="grid grid-cols-2 h-[calc(100vh-4rem)] p-8 gap-8 font-[family-name:var(--font-geist-sans)]">
+      {/* Left - Chat */}
+      <div className="flex flex-col h-full border border-gray-700 rounded-b-lg bg-gray-900 shadow-lg overflow-hidden">
+        <ScrollArea
+          ref={scrollAreaRef}
+          className="flex-1 p-6 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900"
+        >
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={cn(
+                "max-w-[75%] px-4 py-3 rounded-lg whitespace-pre-wrap",
+                msg.sender === "user"
+                  ? "bg-blue-600 text-white ml-auto"
+                  : "bg-gray-800 text-gray-300 mr-auto"
+              )}
+            >
+              {msg.content}
+            </div>
+          ))}
+
+          {loading && (
+            <div className="max-w-[75%] bg-gray-800 text-gray-300 ml-auto px-4 py-3 rounded-lg animate-pulse">
+              Assistant is typing...
+            </div>
+          )}
+        </ScrollArea>
+
+        <footer className="px-6 py-4 border-t border-gray-700 bg-gray-800">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage();
+            }}
+            className="flex gap-3"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            <Input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Ask about PC components..."
+              disabled={loading}
+              className="bg-gray-700 text-white placeholder-gray-400"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <Button
+              type="submit"
+              size="icon"
+              disabled={loading || !inputValue.trim()}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Send className="h-5 w-5 text-white" />
+            </Button>
+          </form>
+        </footer>
+      </div>
+
+      <div className="h-full overflow-y-auto rounded-b-lg border border-gray-700 bg-gray-900 shadow-lg">
+        <PCVisualizer />
+      </div>
     </div>
   );
 }

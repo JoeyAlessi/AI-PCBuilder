@@ -1,0 +1,18 @@
+export const PCCase = ({
+  installedComponents,
+}: {
+  installedComponents: Record<string, any>;
+}) => {
+  return (
+    <div className="text-white text-center">
+      <h2 className="text-xl font-semibold mb-2">PC Case View</h2>
+      <ul className="space-y-1 text-sm text-gray-300">
+        {Object.entries(installedComponents).map(([key, comp]) => (
+          <li key={key}>
+            {key.toUpperCase()}: {comp.name} (${comp.price})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
