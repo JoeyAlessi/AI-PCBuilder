@@ -1,8 +1,20 @@
-export const PCCase = ({
-  installedComponents,
-}: {
-  installedComponents: Record<string, any>;
-}) => {
+import { PCPart } from "@/lib/types";
+
+type ComponentCategory =
+  | "case"
+  | "motherboard"
+  | "cpu"
+  | "gpu"
+  | "ram"
+  | "storage"
+  | "psu"
+  | "cooling";
+
+interface PCCaseProps {
+  installedComponents: Partial<Record<ComponentCategory, PCPart>>;
+}
+
+export const PCCase: React.FC<PCCaseProps> = ({ installedComponents }) => {
   return (
     <div className="text-white text-center">
       <h2 className="text-xl font-semibold mb-2">PC Case View</h2>

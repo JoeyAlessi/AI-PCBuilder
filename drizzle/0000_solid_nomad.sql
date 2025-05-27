@@ -1,0 +1,21 @@
+CREATE TABLE `pc_parts` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`manufacturer` text NOT NULL,
+	`price` integer NOT NULL,
+	`image` text NOT NULL,
+	`category` text NOT NULL,
+	`specs` text NOT NULL,
+	`form_factor` text,
+	`socket` text,
+	`cores` integer,
+	`base_speed` text,
+	`memory` text,
+	`memory_type` text,
+	`capacity` text,
+	`storage_type` text,
+	`wattage` integer,
+	`efficiency` text,
+	`cooling_type` text,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
