@@ -7,6 +7,7 @@ import { PCCase } from "@/components/PCCase";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResizablePanel } from "@/components/ui/resizable-panel";
 import { PCPart } from "@/lib/types";
+import { usePCBuild } from "@/lib/context/PCBuildContext";
 
 const componentCategories = [
   { id: "case", name: "Case" },
@@ -22,31 +23,25 @@ const componentCategories = [
 type ComponentCategory = (typeof componentCategories)[number]["id"];
 
 const SelectCaseMessage = () => (
-  <div className="absolute inset-0 flex items-center justify-center">
-    <div className="bg-gray-800/90 backdrop-blur-sm px-6 py-3 rounded-lg border border-gray-700 shadow-lg">
-      <div className="flex items-center gap-2 text-lg font-medium text-gray-200">
-        <span className="text-2xl">🧩</span>
-        Please select a Case first
-      </div>
-    </div>
+  <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <p className="text-xl text-white font-medium">Please select a case first</p>
   </div>
 );
 
 const LoadingSpinner = () => (
-  <div className="flex items-center justify-center h-full">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+  <div className="flex justify-center items-center h-full">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
   </div>
 );
 
 export const PCVisualizer = () => {
   const [selectedCategory, setSelectedCategory] =
     useState<ComponentCategory>("case");
-  const [installedComponents, setInstalledComponents] = useState<
-    Partial<Record<ComponentCategory, PCPart>>
-  >({});
   const [categoryParts, setCategoryParts] = useState<PCPart[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { selectedParts, updatePart } = usePCBuild();
 
   useEffect(() => {
     const fetchParts = async () => {
@@ -70,39 +65,23 @@ export const PCVisualizer = () => {
     fetchParts();
   }, [selectedCategory]);
 
-  const handleComponentSelection = (
-    category: ComponentCategory,
-    component: PCPart | null
-  ) => {
-    setInstalledComponents((prev) => {
-      if (component === null) {
-        const { [category]: removed, ...rest } = prev;
-        return rest;
-      }
-      return {
-        ...prev,
-        [category]: component,
-      };
-    });
-  };
-
   const handleTabChange = (tabId: ComponentCategory) => {
     // Only allow changing tabs if a case is selected or if selecting the case tab
-    if (installedComponents.case || tabId === "case") {
+    if (selectedParts.case || tabId === "case") {
       setSelectedCategory(tabId);
     }
   };
 
-  const isCaseSelected = Boolean(installedComponents.case);
+  const isCaseSelected = Boolean(selectedParts.case);
 
   return (
     <div className="relative h-full flex flex-col overflow-hidden rounded-lg border border-gray-800 bg-gray-950">
       {/* PC Case Display */}
       <div
         className="flex items-center justify-center relative"
-        style={{ height: "65%" }}
+        style={{ height: "70%" }}
       >
-        <PCCase installedComponents={installedComponents} />
+        <PCCase installedComponents={selectedParts} />
         {!isCaseSelected && <SelectCaseMessage />}
       </div>
 
@@ -124,13 +103,13 @@ export const PCVisualizer = () => {
                   className={cn(
                     "px-3 py-1.5 text-sm whitespace-nowrap transition",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
-                    installedComponents[category.id]
+                    selectedParts[category.id]
                       ? "text-blue-400 border-b-2 border-blue-500"
                       : "text-gray-400 hover:text-white"
                   )}
                 >
                   {category.name}
-                  {installedComponents[category.id] && (
+                  {selectedParts[category.id] && (
                     <span className="ml-1.5 text-xs">✓</span>
                   )}
                 </TabsTrigger>
@@ -152,9 +131,9 @@ export const PCVisualizer = () => {
                 ) : (
                   <ComponentDisplay
                     parts={categoryParts}
-                    selectedPart={installedComponents[category.id] || null}
+                    selectedPart={selectedParts[category.id] || null}
                     onSelectPart={(component) =>
-                      handleComponentSelection(category.id, component)
+                      updatePart(category.id, component)
                     }
                     disabled={!isCaseSelected && category.id !== "case"}
                   />

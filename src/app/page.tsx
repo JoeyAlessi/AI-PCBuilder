@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -42,8 +42,7 @@ export default function Home() {
       sender: "user",
     };
 
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setLoading(true);
 
@@ -54,24 +53,25 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: newMessages.map((msg) => ({
-            role: msg.sender === "user" ? "user" : "assistant",
-            content: msg.content,
-          })),
+          message: userMessage.content,
         }),
       });
 
       const data = await res.json();
 
+      if (!data.content) {
+        throw new Error("Invalid response format: missing content");
+      }
+
       const assistantMessage: Message = {
         id: Date.now().toString(),
-        content: data.reply,
+        content: data.content,
         sender: "assistant",
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err) {
-      console.error(err);
+      console.error("Error in handleSendMessage:", err);
     } finally {
       setLoading(false);
     }

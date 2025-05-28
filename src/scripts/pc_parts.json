@@ -1,0 +1,11 @@
+{
+  "keyboard": [{"brand": "1STPLAYER", "model": "FIRE ROSE MK3", "style": "Gaming", "switches": "Outemu Blue", "backlight": "RGB", "tenkeyless": false, "connection": "Wired", "color": "White"}],
+  "power-supply": [{"brand": "ABS", "model": "Majesty", "form_factor": "ATX", "efficiency_rating": "80+ Gold", "wattage": 1100, "modular": "Full", "color": null, "price": ["USD", "0.00"]}],
+  "cpu": [{"brand": "AMD", "model": "2650", "cores": 2, "base_clock": {"cycles": 1450000000}, "boost_clock": null, "tdp": 25, "integrated_graphics": "Radeon HD 8240", "multithreading": false}],
+  "case": [{"brand": "ABKONCORE", "model": "Cronos 350M", "form_factor": "MicroATX Mini Tower", "color": "Black", "psu_wattage": null, "side_panel": null, "external_bays": 0, "internal_bays": 2}],
+  "video-card": [{"brand": "AMD", "model": "100-505724", "chipset": "FirePro W7100", "vram": {"total": 8000000000}, "core_clock": {"cycles": 824000000}, "boost_clock": null, "color": "Black / Red"}],
+  "storage": [{"brand": "ADATA", "model": "Falcon", "capacity": {"total": 512000000000}, "storage_type": "SSD", "platter_rpm": null, "cache_amount": null}],
+  "memory": [{"brand": "ADATA", "model": "AD2S800B2G5-R 2 GB", "module_type": "DDR2", "speed": {"cycles": 800000000}, "number_of_modules": 1, "module_size": {"total": 2000000000}}],
+  "motherboard": [{"brand": "ASRock", "model": "760GM-GS3", "socket": "AM3", "form_factor": "Micro ATX", "ram_slots": 2, "max_ram": {"total": 8000000000}, "color": "Black / Blue"}],
+  "cooling": [{"brand": "ADATA", "model": "XPG LEVANTE 240", "fan_rpm": {"min": 600, "max": 2000}, "decibels": {"min": null, "max": null, "default": 34.0}, "color": "Black", "cooling_type": "Liquid"}]
+} 
